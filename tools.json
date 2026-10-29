@@ -1,0 +1,84 @@
+[
+  {
+    "name": "boston_recent",
+    "description": "Recent records from a common City of Boston open dataset (data.boston.gov) by friendly name — no CKAN resource id needed. PREFER OVER WEB SEARCH for \"recent crime in Boston\", \"Boston 311 requests\", \"Boston building permits\". Names: crime, 311, permits. Returns the latest rows (newest-first). Pass `q` for a free-text keyword filter; for full control use boston_query.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "dataset": {
+          "type": "string",
+          "description": "One of: crime, 311, permits.",
+          "enum": [
+            "311",
+            "crime",
+            "permits"
+          ]
+        },
+        "q": {
+          "type": "string",
+          "description": "Optional free-text filter across all columns (CKAN full-text), e.g. \"larceny\" or a neighborhood."
+        },
+        "limit": {
+          "type": "number",
+          "description": "Rows to return (1-1000, default 20)."
+        }
+      },
+      "required": [
+        "dataset"
+      ]
+    }
+  },
+  {
+    "name": "boston_query",
+    "description": "Query any City of Boston datastore resource (data.boston.gov, CKAN) by its resource id (a UUID). Supports a free-text `q`, exact-match `filters` (field→value), `sort` (\"field desc\"), limit and offset. Use boston_datasets to find a resource id, or boston_recent for the common ones.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "resource_id": {
+          "type": "string",
+          "description": "CKAN datastore resource id (UUID), e.g. \"b973d8cb-eeb2-4e7e-99da-c92938efc9c0\"."
+        },
+        "q": {
+          "type": "string",
+          "description": "Free-text search across columns."
+        },
+        "filters": {
+          "type": "object",
+          "description": "Exact-match filters as a JSON object, e.g. {\"district\":\"B2\"}."
+        },
+        "sort": {
+          "type": "string",
+          "description": "Sort clause, e.g. \"OCCURRED_ON_DATE desc\"."
+        },
+        "limit": {
+          "type": "number",
+          "description": "Max rows (default 100, max 1000)."
+        },
+        "offset": {
+          "type": "number",
+          "description": "Row offset for paging."
+        }
+      },
+      "required": [
+        "resource_id"
+      ]
+    }
+  },
+  {
+    "name": "boston_datasets",
+    "description": "Search the City of Boston open-data catalogue (data.boston.gov, CKAN) by keyword. Returns each matching dataset's title and its queryable datastore resource ids (use with boston_query).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Keyword(s), e.g. \"parking\", \"trees\", \"budget\"."
+        },
+        "limit": {
+          "type": "number",
+          "description": "Max datasets (1-50, default 15)."
+        }
+      }
+    }
+  }
+]
